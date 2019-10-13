@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Experiments &#8212; jMetalPy 1.5.1 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Multi-objective algorithms" href="../multiobjective.algorithms.html" />
+    <link rel="prev" title="Statistical analysis" href="statistics.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../multiobjective.algorithms.html" title="Multi-objective algorithms"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="statistics.html" title="Statistical analysis"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">jMetalPy 1.5.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../tutorials.html" accesskey="U">Getting started</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">jMetalPy</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Getting started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="problem.html">Defining new problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="observer.html">Observer entities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html">Front visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html">Statistical analysis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Experiments</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../multiobjective.algorithms.html">Multi-objective algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../singleobjective.algorithms.html">Single-objective algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operators.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problems.html">Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="../tutorials.html">Getting started</a></li>
+              
+              <li>Experiments</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="experiments">
+<h1>Experiments<a class="headerlink" href="#experiments" title="Permalink to this headline">¶</a></h1>
+<p>This is an example of an experimental study based on solving two problems of the ZDT family with two versions of the same algorithm (NSGA-II).
+The hypervolume indicator is used for performance assessment.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jmetal.util.laboratory</span> <span class="kn">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">Job</span>
+
+<span class="k">def</span> <span class="nf">configure_experiment</span><span class="p">(</span><span class="n">problems</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">n_run</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+ <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
+
+ <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_run</span><span class="p">):</span>
+     <span class="k">for</span> <span class="n">problem</span> <span class="ow">in</span> <span class="n">problems</span><span class="p">:</span>
+         <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+             <span class="n">Job</span><span class="p">(</span>
+                 <span class="n">algorithm</span><span class="o">=</span><span class="n">NSGAII</span><span class="p">(</span>
+                     <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+                     <span class="n">population_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                     <span class="n">mating_pool_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                     <span class="n">offspring_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                     <span class="n">max_evaluations</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+                     <span class="n">mutation</span><span class="o">=</span><span class="n">NullMutation</span><span class="p">(),</span>
+                     <span class="n">crossover</span><span class="o">=</span><span class="n">SBX</span><span class="p">(</span><span class="n">probability</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">distribution_index</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                     <span class="n">selection</span><span class="o">=</span><span class="n">BinaryTournamentSelection</span><span class="p">(</span><span class="n">comparator</span><span class="o">=</span><span class="n">RankingAndCrowdingDistanceComparator</span><span class="p">())</span>
+                 <span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;NSGAII with Null Mutation&#39;</span><span class="p">,</span>
+                 <span class="n">run</span><span class="o">=</span><span class="n">run</span><span class="p">,</span>
+             <span class="p">)</span>
+         <span class="p">)</span>
+         <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+             <span class="n">Job</span><span class="p">(</span>
+                 <span class="n">algorithm</span><span class="o">=</span><span class="n">NSGAII</span><span class="p">(</span>
+                     <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+                     <span class="n">population_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                     <span class="n">mating_pool_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                     <span class="n">offspring_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                     <span class="n">max_evaluations</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+                     <span class="n">mutation</span><span class="o">=</span><span class="n">Polynomial</span><span class="p">(</span><span class="n">probability</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">problem</span><span class="o">.</span><span class="n">number_of_variables</span><span class="p">,</span> <span class="n">distribution_index</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                     <span class="n">crossover</span><span class="o">=</span><span class="n">SBX</span><span class="p">(</span><span class="n">probability</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">distribution_index</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                     <span class="n">selection</span><span class="o">=</span><span class="n">BinaryTournamentSelection</span><span class="p">(</span><span class="n">comparator</span><span class="o">=</span><span class="n">RankingAndCrowdingDistanceComparator</span><span class="p">())</span>
+                 <span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;NSGAII with Polynomial Mutation&#39;</span><span class="p">,</span>
+                 <span class="n">run</span><span class="o">=</span><span class="n">run</span>
+             <span class="p">)</span>
+         <span class="p">)</span>
+
+ <span class="k">return</span> <span class="n">jobs</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+ <span class="n">jobs</span> <span class="o">=</span> <span class="n">configure_experiment</span><span class="p">(</span><span class="n">problems</span><span class="o">=</span><span class="p">[</span><span class="n">ZDT1</span><span class="p">(),</span> <span class="n">ZDT2</span><span class="p">()],</span> <span class="n">n_run</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+ <span class="n">test</span> <span class="o">=</span> <span class="n">Experiment</span><span class="p">(</span>
+     <span class="n">base_directory</span><span class="o">=</span><span class="s1">&#39;./experiment&#39;</span><span class="p">,</span>
+     <span class="n">jobs</span><span class="o">=</span><span class="n">jobs</span>
+ <span class="p">)</span>
+ <span class="n">test</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+ <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">HyperVolume</span><span class="p">(</span><span class="n">reference_point</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">ComputingTime</span><span class="p">()]</span>
+ <span class="n">data</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">compute_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+ <span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 14%" />
+<col style="width: 5%" />
+<col style="width: 32%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"></th>
+<th class="head"></th>
+<th class="head"><p>NSGAII with Null Mutation</p></th>
+<th class="head"><p>NSGAII with Polynomial Mutation</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>Problem</p></th>
+<th class="head"><p>Metric</p></th>
+<th class="head"><p>Run</p></th>
+<th class="head"></th>
+<th class="head"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p>ZDT1</p></td>
+<td><p>Hypervolume</p></td>
+<td><p>0</p></td>
+<td><p>0.315708</p></td>
+<td><p>0.516258</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>0.323271</p></td>
+<td><p>0.491973</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td><p>2</p></td>
+<td><p>0.414953</p></td>
+<td><p>0.507568</p></td>
+</tr>
+<tr class="row-even"><td><p>ZDT2</p></td>
+<td><p>Hypervolume</p></td>
+<td><p>0</p></td>
+<td><p>0.293225</p></td>
+<td><p>0.504027</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>0.280499</p></td>
+<td><p>0.417048</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td><p>2</p></td>
+<td><p>0.357358</p></td>
+<td><p>0.489576</p></td>
+</tr>
+</tbody>
+</table>
+<p>The return value of <code class="code docutils literal notranslate"><span class="pre">compute_metrics()</span></code> is a pandas DataFrame, so we can use all the methods that pandas makes available for us:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mean_results</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;problem&#39;</span><span class="p">,</span> <span class="s1">&#39;metric&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">median_results</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;problem&#39;</span><span class="p">,</span> <span class="s1">&#39;metric&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+<span class="n">only_one_metric</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span><span class="s1">&#39;Hypervolume&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;metric&#39;</span><span class="p">)</span>
+<span class="n">min_values</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;problem&#39;</span><span class="p">,</span> <span class="s1">&#39;metric&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">max_values</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;problem&#39;</span><span class="p">,</span> <span class="s1">&#39;metric&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="statistics.html" title="previous chapter (use the left arrow)">Statistical analysis</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="../multiobjective.algorithms.html" title="next chapter (use the right arrow)">Multi-objective algorithms</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../multiobjective.algorithms.html" title="Multi-objective algorithms"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="statistics.html" title="Statistical analysis"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">jMetalPy 1.5.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../tutorials.html" >Getting started</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2019, Antonio Benítez-Hidalgo. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

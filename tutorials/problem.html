@@ -26,7 +26,7 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Observer entities" href="observer.html" />
+    <link rel="next" title="Extending the algorithms" href="observer.html" />
     <link rel="prev" title="Getting started" href="../tutorials.html" />
   
    
@@ -42,7 +42,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="observer.html" title="Observer entities"
+          <a href="observer.html" title="Extending the algorithms"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../tutorials.html" title="Getting started"
@@ -69,7 +69,7 @@
       <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Getting started</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Defining new problems</a></li>
-<li class="toctree-l2"><a class="reference internal" href="observer.html">Observer entities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="observer.html">Extending the algorithms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="visualization.html">Front visualization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="experiment.html">Experiments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="statistics.html">Statistical analysis</a></li>
@@ -93,6 +93,7 @@
       <ul>
 <li><a class="reference internal" href="#">Defining new problems</a><ul>
 <li><a class="reference internal" href="#use-case-subset-sum">Use case: Subset Sum</a></li>
+<li><a class="reference internal" href="#use-case-multi-objective-subset-sum">Use case: Multi-objective Subset Sum</a></li>
 <li><a class="reference internal" href="#module-jmetal.core.problem">API</a></li>
 </ul>
 </li>
@@ -138,7 +139,8 @@
 <h2>Use case: Subset Sum<a class="headerlink" href="#use-case-subset-sum" title="Permalink to this headline">¶</a></h2>
 <p>The goal is to find a subset S of W (list of non-negative integers) whose elements sum is closest to (without exceeding) C.
 For example, for the input <span class="math notranslate nohighlight">\(W=\{3, 34, 4, 12, 5, 2\}\)</span> and <span class="math notranslate nohighlight">\(C=9\)</span>, one output could be <span class="math notranslate nohighlight">\(S=\{4, 5\}\)</span> (as it is a subset with sum 9).</p>
-<p>In jMetalPy, this problem  can be encoded as a binary problem with one objective and one variable:</p>
+<p>In jMetalPy, this problem can be encoded as a binary problem with one objective (to be maximized) and one variable
+(a binary array representing whethever the ith element of W is selected or not):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SubsetSum</span><span class="p">(</span><span class="n">BinaryProblem</span><span class="p">):</span>
 
    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">C</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">W</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
@@ -164,10 +166,11 @@ For example, for the input <span class="math notranslate nohighlight">\(W=\{3, 3
       <span class="k">return</span> <span class="s1">&#39;Subset Sum&#39;</span>
 </pre></div>
 </div>
-<p>Each solution consists of one objective function to be maximized to be as close as possible to <span class="math notranslate nohighlight">\(C\)</span>:</p>
+<p>Now we have to define the abstract methods <code class="code docutils literal notranslate"><span class="pre">evaluate</span></code> and <code class="code docutils literal notranslate"><span class="pre">create_solution</span></code> from the <a class="reference internal" href="#jmetal.core.problem.Problem" title="jmetal.core.problem.Problem"><code class="xref py py-mod docutils literal notranslate"><span class="pre">jmetal.core.problem.Problem</span></code></a> class.</p>
+<p>Note that each solution consists of one objective function to be maximized to be as close as possible to <span class="math notranslate nohighlight">\(C\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\max{\sum_{i \in S}{s_i}}\]</div>
-<p>In the former example, one solution could be created and evaluated as follows:</p>
+<p>Taking this into account, one solution could be created and evaluated as follows:</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>jMetalPy assumes minimization by default. Therefore, we will have to multiply the solution objective by <span class="math notranslate nohighlight">\(-1.0\)</span>.</p>
@@ -190,11 +193,57 @@ For example, for the input <span class="math notranslate nohighlight">\(W=\{3, 3
     <span class="k">return</span> <span class="n">solution</span>
 
 <span class="k">def</span> <span class="nf">create_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BinarySolution</span><span class="p">:</span>
-    <span class="n">new_solution</span> <span class="o">=</span> <span class="n">BinarySolution</span><span class="p">(</span><span class="n">number_of_variables</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">number_of_objectives</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">new_solution</span> <span class="o">=</span> <span class="n">BinarySolution</span><span class="p">(</span><span class="n">number_of_variables</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_variables</span><span class="p">,</span>
+                                  <span class="n">number_of_objectives</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_objectives</span><span class="p">)</span>
     <span class="n">new_solution</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> \
         <span class="p">[</span><span class="bp">True</span> <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">False</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_bits</span><span class="p">)]</span>
 
     <span class="k">return</span> <span class="n">new_solution</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-case-multi-objective-subset-sum">
+<h2>Use case: Multi-objective Subset Sum<a class="headerlink" href="#use-case-multi-objective-subset-sum" title="Permalink to this headline">¶</a></h2>
+<p>The former problem can be formulated as a multi-objective binary problem whose objectives are as follows:</p>
+<ol class="arabic simple">
+<li><p>Maximize the sum of subsets to be as close as possible to <span class="math notranslate nohighlight">\(C\)</span> and</p></li>
+<li><p>Minimize the number of elements selected from <span class="math notranslate nohighlight">\(W\)</span>.</p></li>
+</ol>
+<p>This can be done by incorporating the objective function and increasing the number of objectives in consecuence:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>class SubsetSum(BinaryProblem):
+
+   def __init__(self, C: int, W: list):
+      super(SubsetSum, self).__init__(reference_front=None)
+      self.C = C
+      self.W = W
+
+      self.number_of_bits = len(self.W)
+<span class="gi">+     self.number_of_objectives = 2</span>
+      self.number_of_variables = 1
+      self.number_of_constraints = 0
+
+<span class="gi">+     self.obj_directions = [self.MAXIMIZE, self.MINIMIZE]</span>
+<span class="gi">+     self.obj_labels = [&#39;Sum&#39;, &#39;No. of Objects&#39;]</span>
+
+   def evaluate(self, solution: BinarySolution) -&gt; BinarySolution:
+      total_sum = 0.0
+<span class="gi">+     number_of_objects = 0</span>
+
+<span class="gi">+     for index, bits in enumerate(solution.variables[0]):</span>
+<span class="gi">+        if bits:</span>
+<span class="gi">+           total_sum += self.W[index]</span>
+<span class="gi">+              number_of_objects += 1</span>
+
+      if total_sum &gt; self.C:
+         total_sum = self.C - total_sum * 0.1
+
+         if total_sum &lt; 0.0:
+             total_sum = 0.0
+
+      solution.objectives[0] = -1.0 * total_sum
+<span class="gi">+     solution.objectives[1] = number_of_objects</span>
+
+      return solution
 </pre></div>
 </div>
 </div>
@@ -203,25 +252,14 @@ For example, for the input <span class="math notranslate nohighlight">\(W=\{3, 3
 <dl class="class">
 <dt id="jmetal.core.problem.BinaryProblem">
 <em class="property">class </em><code class="sig-prename descclassname">jmetal.core.problem.</code><code class="sig-name descname">BinaryProblem</code><a class="reference internal" href="../_modules/jmetal/core/problem.html#BinaryProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jmetal.core.problem.BinaryProblem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#jmetal.core.problem.Problem" title="jmetal.core.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.problem.Problem</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#jmetal.core.problem.Problem" title="jmetal.core.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.problem.Problem</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Class representing binary problems.</p>
-<dl class="method">
-<dt id="jmetal.core.problem.BinaryProblem.create_solution">
-<code class="sig-name descname">create_solution</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; jmetal.core.solution.BinarySolution<a class="reference internal" href="../_modules/jmetal/core/problem.html#BinaryProblem.create_solution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jmetal.core.problem.BinaryProblem.create_solution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a random solution to the problem.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Solution.</p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
 <dt id="jmetal.core.problem.DynamicProblem">
 <em class="property">class </em><code class="sig-prename descclassname">jmetal.core.problem.</code><code class="sig-name descname">DynamicProblem</code><a class="reference internal" href="../_modules/jmetal/core/problem.html#DynamicProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jmetal.core.problem.DynamicProblem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#jmetal.core.problem.Problem" title="jmetal.core.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.problem.Problem</span></code></a>, <a class="reference internal" href="observer.html#jmetal.core.observer.Observer" title="jmetal.core.observer.Observer"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.observer.Observer</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#jmetal.core.problem.Problem" title="jmetal.core.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.problem.Problem</span></code></a>, <a class="reference internal" href="observer.html#jmetal.core.observer.Observer" title="jmetal.core.observer.Observer"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.observer.Observer</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <dl class="method">
 <dt id="jmetal.core.problem.DynamicProblem.clear_changed">
 <em class="property">abstract </em><code class="sig-name descname">clear_changed</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/jmetal/core/problem.html#DynamicProblem.clear_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jmetal.core.problem.DynamicProblem.clear_changed" title="Permalink to this definition">¶</a></dt>
@@ -237,7 +275,7 @@ For example, for the input <span class="math notranslate nohighlight">\(W=\{3, 3
 <dl class="class">
 <dt id="jmetal.core.problem.FloatProblem">
 <em class="property">class </em><code class="sig-prename descclassname">jmetal.core.problem.</code><code class="sig-name descname">FloatProblem</code><a class="reference internal" href="../_modules/jmetal/core/problem.html#FloatProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jmetal.core.problem.FloatProblem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#jmetal.core.problem.Problem" title="jmetal.core.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.problem.Problem</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#jmetal.core.problem.Problem" title="jmetal.core.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.problem.Problem</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Class representing float problems.</p>
 <dl class="method">
 <dt id="jmetal.core.problem.FloatProblem.create_solution">
@@ -255,7 +293,7 @@ For example, for the input <span class="math notranslate nohighlight">\(W=\{3, 3
 <dl class="class">
 <dt id="jmetal.core.problem.IntegerProblem">
 <em class="property">class </em><code class="sig-prename descclassname">jmetal.core.problem.</code><code class="sig-name descname">IntegerProblem</code><a class="reference internal" href="../_modules/jmetal/core/problem.html#IntegerProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jmetal.core.problem.IntegerProblem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#jmetal.core.problem.Problem" title="jmetal.core.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.problem.Problem</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#jmetal.core.problem.Problem" title="jmetal.core.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.problem.Problem</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Class representing integer problems.</p>
 <dl class="method">
 <dt id="jmetal.core.problem.IntegerProblem.create_solution">
@@ -334,25 +372,14 @@ replaced. Note that this framework ASSUMES minimization, thus solutions must be 
 <dl class="class">
 <dt id="jmetal.core.problem.PermutationProblem">
 <em class="property">class </em><code class="sig-prename descclassname">jmetal.core.problem.</code><code class="sig-name descname">PermutationProblem</code><a class="reference internal" href="../_modules/jmetal/core/problem.html#PermutationProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jmetal.core.problem.PermutationProblem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#jmetal.core.problem.Problem" title="jmetal.core.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.problem.Problem</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#jmetal.core.problem.Problem" title="jmetal.core.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">jmetal.core.problem.Problem</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Class representing permutation problems.</p>
-<dl class="method">
-<dt id="jmetal.core.problem.PermutationProblem.create_solution">
-<code class="sig-name descname">create_solution</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; jmetal.core.solution.IntegerSolution<a class="reference internal" href="../_modules/jmetal/core/problem.html#PermutationProblem.create_solution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jmetal.core.problem.PermutationProblem.create_solution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a random solution to the problem.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Solution.</p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
 <dt id="jmetal.core.problem.Problem">
 <em class="property">class </em><code class="sig-prename descclassname">jmetal.core.problem.</code><code class="sig-name descname">Problem</code><a class="reference internal" href="../_modules/jmetal/core/problem.html#Problem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jmetal.core.problem.Problem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Class representing problems.</p>
 <dl class="attribute">
 <dt id="jmetal.core.problem.Problem.MAXIMIZE">
@@ -407,7 +434,7 @@ replaced. Note that this framework ASSUMES minimization, thus solutions must be 
       </div>
     
       <div class="pull-right">
-        <a class="btn btn-default" href="observer.html" title="next chapter (use the right arrow)">Observer entities</a>
+        <a class="btn btn-default" href="observer.html" title="next chapter (use the right arrow)">Extending the algorithms</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -425,7 +452,7 @@ replaced. Note that this framework ASSUMES minimization, thus solutions must be 
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="observer.html" title="Observer entities"
+          <a href="observer.html" title="Extending the algorithms"
              >next</a> |</li>
         <li class="right" >
           <a href="../tutorials.html" title="Getting started"

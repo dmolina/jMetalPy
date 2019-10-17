@@ -113,13 +113,12 @@
 <span class="kn">from</span> <span class="nn">jmetal.core.algorithm</span> <span class="k">import</span> <span class="n">DynamicAlgorithm</span><span class="p">,</span> <span class="n">Algorithm</span>
 <span class="kn">from</span> <span class="nn">jmetal.core.operator</span> <span class="k">import</span> <span class="n">Mutation</span><span class="p">,</span> <span class="n">Crossover</span><span class="p">,</span> <span class="n">Selection</span>
 <span class="kn">from</span> <span class="nn">jmetal.core.problem</span> <span class="k">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">DynamicProblem</span>
-<span class="kn">from</span> <span class="nn">jmetal.operator</span> <span class="k">import</span> <span class="n">RankingAndCrowdingDistanceSelection</span><span class="p">,</span> <span class="n">BinaryTournamentSelection</span>
+<span class="kn">from</span> <span class="nn">jmetal.operator</span> <span class="k">import</span> <span class="n">BinaryTournamentSelection</span>
 <span class="kn">from</span> <span class="nn">jmetal.util.density_estimator</span> <span class="k">import</span> <span class="n">CrowdingDistance</span>
 <span class="kn">from</span> <span class="nn">jmetal.util.ranking</span> <span class="k">import</span> <span class="n">FastNonDominatedRanking</span>
 <span class="kn">from</span> <span class="nn">jmetal.util.replacement</span> <span class="k">import</span> <span class="n">RankingAndDensityEstimatorReplacement</span><span class="p">,</span> <span class="n">RemovalPolicyType</span>
 <span class="kn">from</span> <span class="nn">jmetal.util.solutions</span> <span class="k">import</span> <span class="n">Evaluator</span><span class="p">,</span> <span class="n">Generator</span>
-<span class="kn">from</span> <span class="nn">jmetal.util.solutions.comparator</span> <span class="k">import</span> <span class="n">DominanceComparator</span><span class="p">,</span> <span class="n">Comparator</span><span class="p">,</span> <span class="n">RankingAndCrowdingDistanceComparator</span><span class="p">,</span> \
-    <span class="n">MultiComparator</span>
+<span class="kn">from</span> <span class="nn">jmetal.util.solutions.comparator</span> <span class="k">import</span> <span class="n">DominanceComparator</span><span class="p">,</span> <span class="n">Comparator</span><span class="p">,</span> <span class="n">MultiComparator</span>
 <span class="kn">from</span> <span class="nn">jmetal.util.termination_criterion</span> <span class="k">import</span> <span class="n">TerminationCriterion</span>
 
 <span class="n">S</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">)</span>
@@ -268,14 +267,18 @@
                  <span class="n">crossover</span><span class="p">:</span> <span class="n">Crossover</span><span class="p">,</span>
                  <span class="n">number_of_cores</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
-                 <span class="n">selection</span><span class="p">:</span> <span class="n">Selection</span> <span class="o">=</span> <span class="n">BinaryTournamentSelection</span><span class="p">(</span><span class="n">RankingAndCrowdingDistanceComparator</span><span class="p">()),</span>
-                 <span class="n">termination_criterion</span><span class="p">:</span> <span class="n">TerminationCriterion</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">default_termination_criteria</span><span class="p">):</span>
+                 <span class="n">selection</span><span class="p">:</span> <span class="n">Selection</span> <span class="o">=</span> <span class="n">BinaryTournamentSelection</span><span class="p">(</span>
+                     <span class="n">MultiComparator</span><span class="p">([</span><span class="n">FastNonDominatedRanking</span><span class="o">.</span><span class="n">get_comparator</span><span class="p">(),</span>
+                                      <span class="n">CrowdingDistance</span><span class="o">.</span><span class="n">get_comparator</span><span class="p">()])),</span>
+                 <span class="n">termination_criterion</span><span class="p">:</span> <span class="n">TerminationCriterion</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">default_termination_criteria</span><span class="p">,</span>
+                 <span class="n">dominance_comparator</span><span class="p">:</span> <span class="n">DominanceComparator</span> <span class="o">=</span> <span class="n">DominanceComparator</span><span class="p">()):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DistributedNSGAII</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">problem</span> <span class="o">=</span> <span class="n">problem</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">population_size</span> <span class="o">=</span> <span class="n">population_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mutation_operator</span> <span class="o">=</span> <span class="n">mutation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">crossover_operator</span> <span class="o">=</span> <span class="n">crossover</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">selection_operator</span> <span class="o">=</span> <span class="n">selection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dominance_comparator</span> <span class="o">=</span> <span class="n">dominance_comparator</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">termination_criterion</span> <span class="o">=</span> <span class="n">termination_criterion</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observable</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">termination_criterion</span><span class="p">)</span>
@@ -358,9 +361,11 @@
                 <span class="n">offspring_population</span> <span class="o">=</span> <span class="p">[</span><span class="n">received_solution</span><span class="p">]</span>
 
                 <span class="c1"># replacement</span>
-                <span class="n">join_population</span> <span class="o">=</span> <span class="n">auxiliar_population</span> <span class="o">+</span> <span class="n">offspring_population</span>
-                <span class="n">auxiliar_population</span> <span class="o">=</span> <span class="n">RankingAndCrowdingDistanceSelection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population_size</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                    <span class="n">join_population</span><span class="p">)</span>
+                <span class="n">ranking</span> <span class="o">=</span> <span class="n">FastNonDominatedRanking</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dominance_comparator</span><span class="p">)</span>
+                <span class="n">density_estimator</span> <span class="o">=</span> <span class="n">CrowdingDistance</span><span class="p">()</span>
+
+                <span class="n">r</span> <span class="o">=</span> <span class="n">RankingAndDensityEstimatorReplacement</span><span class="p">(</span><span class="n">ranking</span><span class="p">,</span> <span class="n">density_estimator</span><span class="p">,</span> <span class="n">RemovalPolicyType</span><span class="o">.</span><span class="n">ONE_SHOT</span><span class="p">)</span>
+                <span class="n">auxiliar_population</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">auxiliar_population</span><span class="p">,</span> <span class="n">offspring_population</span><span class="p">)</span>
 
                 <span class="c1"># selection</span>
                 <span class="n">mating_population</span> <span class="o">=</span> <span class="p">[]</span>
